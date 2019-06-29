@@ -66,29 +66,20 @@ public class GoodsController {
 	}
 
 
-
-	/*@RequestMapping("/add")
-	public Result add(@RequestBody Goods goods){
-		//获取登录名
-		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
-		goods.getGoods().setSellerId(sellerId);//设置商家ID
-		try {
-			goodsService.add(goods);
-			return new Result(true, "增加成功");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Result(false, "增加失败");
-		}
-	}*/
-
-
 	/**
 	 * 修改
 	 * @param goods
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
+	public Result update(@RequestBody Goods goods){
+		//获取当亲登录上商家的ID
+		String sellerId="qiandu";
+		//校验是否是当前的商家ID
+		Goods goods2 = goodsService.findOne(goods.getGoods().getId());
+		if (!goods2.getGoods().getSellerId().equals(sellerId)||!goods.getGoods().getSellerId().equals(sellerId)){
+			return  new Result(false,"非法操作");
+		}
 		try {
 			goodsService.update(goods);
 			return new Result(true, "修改成功");
@@ -104,8 +95,9 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
-		return goodsService.findOne(id);		
+	public Goods findOne(Long id){
+
+		return goodsService.findOne(id);
 	}
 	
 	/**
@@ -131,10 +123,30 @@ public class GoodsController {
 	 * @param rows
 	 * @return
 	 */
-	@RequestMapping("/search")
-	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
-		return goodsService.findPage(goods, page, rows);		
+		@RequestMapping("/search")
+		public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
+			//获取商家ID
+			String sellerId = "qiandu";
+			//添加查询条件
+			goods.setSellerId(sellerId);
+			return goodsService.findPage(goods, page, rows);
+		}
+	/**
+	 * 更新状态
+	 * @param ids
+	 * @param status
+	 */
+	@RequestMapping("/updateStatus")
+	public Result updateStatus(Long[] ids, String status){
+		try {
+			goodsService.updateStatus(ids, status);
+			return new Result(true, "成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "失败");
+		}
 	}
 
-	
+
+
 }

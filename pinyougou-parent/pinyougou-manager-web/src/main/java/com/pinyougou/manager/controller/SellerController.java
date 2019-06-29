@@ -49,10 +49,10 @@ public class SellerController {
 	 */
 	@RequestMapping("/add")
 	public Result add(@RequestBody TbSeller seller){
-	/*	//密码加密
+		//密码加密
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String password = passwordEncoder.encode(seller.getPassword());
-		seller.setPassword(password);*/
+		seller.setPassword(password);
 		try {
 			sellerService.add(seller);
 			return new Result(true, "增加成功");
